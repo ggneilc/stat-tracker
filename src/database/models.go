@@ -1,3 +1,4 @@
+//This file represents all the Tables and the relationships between them, formatted as Go Structs.
 package database
 
 import (
