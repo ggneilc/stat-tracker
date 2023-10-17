@@ -1,0 +1,9 @@
+body {
+  background: black;
+}
+
+body > {
+  color: whitesmoke;
+}
+
+
