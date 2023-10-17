@@ -15,7 +15,7 @@ How it achieves this:
 
 ## Tech Stack and Resources
 
-This app is meant to start off as a test of using Golang:
+This app is meant to start off as a test of using Golang and Supabase:
 
 - React Fronted
 - Golang Backend
