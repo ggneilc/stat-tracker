@@ -3,6 +3,7 @@ package controller
 import (
   "strconv"
   "log"
+  "gorm.io/gorm"
   "github.com/gofiber/fiber/v2"
   "github.com/ggneilc/stat-tracker/src/database"
 )
@@ -22,8 +23,6 @@ func CreateUser(c *fiber.Ctx) error {
   //returns the newly created user as json
   return c.JSON(user)
 }
-
-
 //Update User setting Information
 func UpdateUser(c *fiber.Ctx) error {
   tempId := c.Params("id")
@@ -120,8 +119,10 @@ func createMeal(c *fiber.Ctx) error {
   database.DB.Create(&meal)
 
   //add meal to current day info
-  user.CurrentDay.Meals = append(user.CurrentDay.Meals, *meal)
-  database.DB.Save(&user)
+  database.DB.Model(&user).Association("CurrentDay.Meals").Append(&meal)
+  database.DB.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&user)
+  //user.CurrentDay.Meals = append(user.CurrentDay.Meals, *meal)
+  //database.DB.Save(&user)
 
   //returns the newly created meal as json
   return c.JSON(user)

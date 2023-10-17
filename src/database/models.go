@@ -17,7 +17,7 @@ type User struct {
   Height  uint
   Goal    string
   HealthScore uint
-  CurrentDay  Day
+  CurrentDay  Day    `gorm:"foreignkey:UserID"`
   PastDays    []Day  `gorm:"foreignkey:UserID;association_autoupdate:false;association_autocreate:false"`
 }
 
