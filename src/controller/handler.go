@@ -40,7 +40,6 @@ func UpdateUser(c *fiber.Ctx) error {
   database.DB.Save(&user)
   return c.SendString("Successfully updated User")
 }
-
 //Get All Users
 func getAllUsers(c *fiber.Ctx) error {
   var users []database.User
@@ -69,6 +68,8 @@ func DeleteUser(c *fiber.Ctx) error {
   database.DB.Delete(&database.User{}, id)
   return c.SendString("Successfuly deleted user")
 }
+
+
 
 
 /* ---------------- CRUD Functionality for Stat Entry ------------------ */
@@ -105,7 +106,6 @@ func createMeal(c *fiber.Ctx) error {
   database.DB.First(&user, id)
 
   database.DB.Preload("CurrentDay.Meals").Find(&user, id)
-
   //create meal
   meal := new(database.Meal)
   //  Parse body into product struct
