@@ -15,11 +15,11 @@ How it achieves this:
 
 ## Tech Stack and Resources
 
-This app is meant to start off as a test of using Golang and Supabase:
+This app is meant to start off as a test of using Golang as the backend:
 
 - React Fronted
 - Golang Backend
     - GoFiber for Express.js like API
     - GORM for object relational mapping to database
-- Supabase (postgres realtime) database
+- Postgres / mysql database (indecisive rn)
 
