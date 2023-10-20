@@ -13,6 +13,8 @@ How it achieves this:
 - Serotonin inducing homescreen that shows your overall sense of progress
 - Fun animations that induce dopamine (you want to enter more data = you have to go out and do things!)
 
+as well as having in depth analytics about yourself, similar to a website like [This](https://u.gg/lol/profile/na1/loltyler1/overview).
+
 ## Tech Stack and Resources
 
 This app is meant to start off as a test of using Golang as the backend and learning how to use React:
