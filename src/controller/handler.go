@@ -5,23 +5,33 @@ import (
   "log"
   "gorm.io/gorm"
   "github.com/gofiber/fiber/v2"
+  "github.com/gofiber/fiber/v2/middleware/session"
   "github.com/ggneilc/stat-tracker/src/database"
 )
 
+//storage for all app's sessions
+var store = session.New()
+
+//struct to validate user
+type AuthUser struct {
+  Email string `json:"email"`
+  Pass  string `json:"pass"`
+}
+
+
 /* ---------------- CRUD Functionality for User ------------------ */
-//Create User out of JSON/text/html
+//Create User out of JSON/text/html -> signup
 func CreateUser(c *fiber.Ctx) error {
   user := new(database.User)
-  //  Parse body into product struct
+
 	if err := c.BodyParser(user); err != nil {
 		log.Println(err)
 		return c.SendString("Error parsing body")
 	}
-  //Insert into database
   database.DB.Create(&user)
   createNewDayForUser(user)
-  //returns the newly created user as json
-  return c.JSON(user)
+
+  return c.SendString("Successfuly Created User")
 }
 //Update User setting Information
 func UpdateUser(c *fiber.Ctx) error {
@@ -40,7 +50,6 @@ func UpdateUser(c *fiber.Ctx) error {
   database.DB.Save(&user)
   return c.SendString("Successfully updated User")
 }
-
 //Get All Users
 func getAllUsers(c *fiber.Ctx) error {
   var users []database.User
@@ -52,27 +61,77 @@ func getAllUsers(c *fiber.Ctx) error {
 }
 //Get Single User
 func getSingleUser(c *fiber.Ctx) error {
-  id, err := strconv.Atoi(c.Params("id"))
-  if err != nil {
-    return c.SendString("error parsing ID")
-  }
+  id := c.Params("id")
   var user database.User
   database.DB.First(&user, id)
   return c.JSON(user)
 }
 //Delete User
 func DeleteUser(c *fiber.Ctx) error {
-  id, err := strconv.Atoi(c.Params("id"))
-  if err != nil {
-    return c.SendString("error parsing ID")
-  }
+  id := c.Params("id")
   database.DB.Delete(&database.User{}, id)
   return c.SendString("Successfuly deleted user")
 }
 
 
+//---------- User Auth ----------//
+func LoginUser(c *fiber.Ctx) error {
+  Authuser := new(AuthUser)
+  user := new(database.User)
+
+	if err := c.BodyParser(Authuser); err != nil {
+		log.Println(err)
+		return c.SendString("Error parsing body")
+	}
+
+  database.DB.Find(&user, 
+  "Email = ? AND Password = ?",
+  Authuser.Email, Authuser.Pass )
+
+  //we are storing type User 
+  store.RegisterType(user)
+
+  ses, err := store.Get(c)
+  if err != nil {
+    return err
+  }
+
+  //key - value
+  ses.Set("user", user)
+
+  if err := ses.Save(); err != nil {
+    return err
+  }
+
+  return c.SendString("Successfully Validated User")
+}
+
+func getUserSession(c *fiber.Ctx) error {
+  //retrieve the session
+  ses, err := store.Get(c)
+  if err != nil{
+    return err
+  }
+
+  //store.get returns type interface{} (generic)
+  userInter := ses.Get("user")
+  user := userInter.(*database.User) //assert type User
+
+  //testing
+  database.DB.Preload("CurrentDay.Meals").Find(&user, user.ID)
+
+  return c.JSON(user)
+}
+
+
+
+
+
+
+
 /* ---------------- CRUD Functionality for Stat Entry ------------------ */
 
+//---------- User's Day ----------//
 func getUsersToday(c *fiber.Ctx) error {
   //get user by id
   id, err := strconv.Atoi(c.Params("id"))
@@ -80,11 +139,17 @@ func getUsersToday(c *fiber.Ctx) error {
     return c.SendString("error parsing ID")
   }
   var user database.User
-  //database.DB.First(&user, id)
-  database.DB.Preload("CurrentDay").Find(&user, id)
-  database.DB.Preload("CurrentDay.Meals").Find(&user, id)
+  
+  //Find the user, load all their information
+  //database.DB.Preload("CurrentDay").Preload(clause.Associations).Find(&user, id)
+  database.DB.Preload("CurrentDay").
+  Preload("CurrentDay.Meals").
+  Preload("CurrentDay.Weights").
+  Preload("CurrentDay.Water").
+  Preload("CurrentDay.Sleep").
+  Find(&user, id)
 
-  return c.JSON(user.CurrentDay)
+  return c.JSON(user)
 }
 
 func createNewDayForUser(user *database.User) {
@@ -94,61 +159,156 @@ func createNewDayForUser(user *database.User) {
   database.DB.Create(&newDay)
 }
 
+
+
+
+
+
 //Have a user Create/Update/Delete/List Meals
 func createMeal(c *fiber.Ctx) error {
-  //get user by ID
-  id, err := strconv.Atoi(c.Params("id"))
-  if err != nil {
-    return c.SendString("error parsing ID")
-  }
+
+  id := c.Params("id")
   var user database.User
   database.DB.First(&user, id)
 
   database.DB.Preload("CurrentDay.Meals").Find(&user, id)
 
-  //create meal
   meal := new(database.Meal)
-  //  Parse body into product struct
 	if err := c.BodyParser(meal); err != nil {
 		log.Println(err)
 		return c.SendString("Error parsing body")
 	}
   meal.DayID = user.CurrentDay.ID;
 
-  //Insert into database
   database.DB.Create(&meal)
 
   //add meal to current day info
   database.DB.Model(&user).Association("CurrentDay.Meals").Append(&meal)
   database.DB.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&user)
-  //user.CurrentDay.Meals = append(user.CurrentDay.Meals, *meal)
-  //database.DB.Save(&user)
 
   //returns the newly created meal as json
-  return c.JSON(user)
+  return c.JSON(meal)
 }
 
 //Get User Meals
 func getTodayMeals(c *fiber.Ctx) error {
-  id, err := strconv.Atoi(c.Params("id"))
-  if err != nil {
-    return c.SendString("error parsing ID")
-  }
+  id := c.Params("id")
   var user database.User
   database.DB.Preload("CurrentDay.Meals").First(&user, id)
-  
 
   return c.JSON(user.CurrentDay.Meals)
 }
+
+
 //Have a user Create/Update/Delete/List Weights
+func createWorkout(c *fiber.Ctx) error {
+  //get user by ID
+  id := c.Params("id")
+  db := database.DB
+
+  var user database.User
+  db.First(&user, id)
+
+  db.Preload("CurrentDay.Weights").Find(&user, id)
+
+  workout := new(database.Weight)
+	if err := c.BodyParser(workout); err != nil {
+		log.Println(err)
+		return c.SendString("Error parsing body")
+	}
+  workout.DayID = user.CurrentDay.ID;
+
+  database.DB.Create(&workout)
+
+  //add meal to current day info
+  database.DB.Model(&user).Association("CurrentDay.Weights").Append(&workout)
+  database.DB.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&user)
+
+  //returns the newly created meal as json
+  return c.JSON(workout)
+}
+
+
+func getTodayWorkouts(c *fiber.Ctx) error {
+  id := c.Params("id")
+
+  var user database.User
+  database.DB.Preload("CurrentDay.Weights").First(&user, id)
+  
+  return c.JSON(user.CurrentDay.Weights)
+}
 //Have a user Create/Update/Delete/List Water
+func createWater(c *fiber.Ctx) error {
+  id := c.Params("id")
+  db := database.DB
+
+  var user database.User
+  db.First(&user, id)
+
+  db.Preload("CurrentDay.Water").Find(&user, id)
+
+  water := new(database.Water)
+	if err := c.BodyParser(water); err != nil {
+		log.Println(err)
+		return c.SendString("Error parsing body")
+	}
+  water.DayID = user.CurrentDay.ID;
+
+  database.DB.Create(&water)
+
+  //add meal to current day info
+  database.DB.Model(&user).Association("CurrentDay.Water").Append(&water)
+  database.DB.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&user)
+
+  //returns the newly created meal as json
+  return c.JSON(water)
+}
+
+func getTodayWater(c *fiber.Ctx) error {
+  id := c.Params("id")
+  var user database.User
+  database.DB.Preload("CurrentDay.Water").First(&user, id)
+
+  return c.JSON(user.CurrentDay.Water)
+}
+
 //Have a user Create/Update/Delete/List Sleep
+func createSleep(c *fiber.Ctx) error {
+  id := c.Params("id")
+  db := database.DB
+
+  var user database.User
+  db.First(&user, id)
+
+  db.Preload("CurrentDay.Sleep").Find(&user, id)
+
+  sleep := new(database.Sleep)
+	if err := c.BodyParser(sleep); err != nil {
+		log.Println(err)
+		return c.SendString("Error parsing body")
+	}
+  sleep.DayID = user.CurrentDay.ID;
+
+  database.DB.Create(&sleep)
+
+  //add meal to current day info
+  database.DB.Model(&user).Association("CurrentDay.Water").Append(&sleep)
+  database.DB.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&user)
+
+  //returns the newly created meal as json
+  return c.JSON(sleep)
+}
+
+func getTodaySleep(c *fiber.Ctx) error {
+  id := c.Params("id")
+  var user database.User
+  database.DB.Preload("CurrentDay.Sleep").First(&user, id)
+
+  return c.JSON(user.CurrentDay.Sleep)
+}
 
 
 /* ----------------- --------------- Services ----------------- ----------------- */
 
 /* ----------------  ------------------ */
-
-
-
 
