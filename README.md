@@ -15,7 +15,7 @@ How it achieves this:
 
 ## Tech Stack and Resources
 
-This app is meant to start off as a test of using Golang as the backend:
+This app is meant to start off as a test of using Golang as the backend and learning how to use React:
 
 - React Fronted
 - Golang Backend
