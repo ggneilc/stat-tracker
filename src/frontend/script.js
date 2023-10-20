@@ -1,27 +1,29 @@
 
 // frontend/script.js
 document.addEventListener("DOMContentLoaded", () => {
-    const userDataContainer = document.getElementById("user-data");
-    const userForm = document.getElementById("user-form");
-    const createUserButton = document.getElementById("create-user-button");
+  const userDataContainer = document.getElementById("user-data");
+  const userForm = document.getElementById("user-form");
+  const loginForm = document.getElementById("login-form");
+
+
 
 
     // Function to fetch and display user data
-    function fetchUserData() {
-        fetch("/users")
-            .then((response) => response.json())
-            .then((data) => {
-                userDataContainer.innerHTML = ""; // Clear existing data
-                data.forEach((user) => {
-                    const row = document.createElement("tr");
-                    row.innerHTML = `<td>${user.ID}</td><td>${user.Username}</td><td>${user.Email}</td><td>${user.Password}</td><td>${user.Age}</td><td>${user.Weight}</td><td>${user.Height}</td>`;
-                    userDataContainer.appendChild(row);
-                });
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-            });
-    }
+  function fetchUserData() {
+    fetch("/users")
+      .then((response) => response.json())
+      .then((data) => {
+        userDataContainer.innerHTML = ""; // Clear existing data
+        data.forEach((user) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `<td>${user.ID}</td><td>${user.Username}</td><td>${user.Email}</td><td>${user.Password}</td><td>${user.Age}</td><td>${user.Weight}</td><td>${user.Height}</td>`;
+          userDataContainer.appendChild(row);
+        });
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  }
 
   // Handle form submission
     userForm.addEventListener("submit", (event) => {
@@ -39,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
 
         // Make a POST request to create a new user
-        fetch("/users", {
+        fetch("/signup", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -54,6 +56,29 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.error("Error creating user:", error);
             });
     });
+
+  loginForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const formData = new FormData(loginForm);
+    const userData = {
+      email: formData.get("Email"),
+      password: formData.get("Password"),
+    };
+
+    fetch("/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData)
+    })
+      .then(() => {
+        window.location.href="/home.html";
+      });
+
+
+  });
 
     // Fetch and display user data when the page loads
     fetchUserData();

@@ -18,7 +18,7 @@ type User struct {
   Goal    string
   HealthScore uint
   CurrentDay  Day    `gorm:"foreignkey:UserID"`
-  PastDays    []Day  `gorm:"foreignkey:UserID;association_autoupdate:false;association_autocreate:false"`
+  PastDays    []Day  `gorm:"foreignkey:UserID"`
 }
 
 type Day struct {
@@ -26,10 +26,10 @@ type Day struct {
 
   UserID  uint
 
-  Meals   []Meal    `gorm:"foreignkey:DayID;association_autoupdate:false;association_autocreate:false"`
-  Water   []Water   `gorm:"foreignkey:DayID;association_autoupdate:false;association_autocreate:false"`
-  Weights []Weight  `gorm:"foreignkey:DayID;association_autoupdate:false;association_autocreate:false"`
-  Sleep   []Sleep   `gorm:"foreignkey:DayID;association_autoupdate:false;association_autocreate:false"`
+  Meals   []Meal    `gorm:"foreignkey:DayID;auto_association:true"`
+  Water   []Water   `gorm:"foreignkey:DayID"`
+  Weights []Weight  `gorm:"foreignkey:DayID"`
+  Sleep   []Sleep   `gorm:"foreignkey:DayID"`
 }
 
 type Meal struct {

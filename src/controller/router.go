@@ -5,20 +5,34 @@ import (
 ) 
 
 func SetupRoutes (app *fiber.App)  {
+  user := app.Group("/users")
 
-  //----- Dealing with the User -----------//
+  //--Purely Testing--//
   app.Get(    "/users",     getAllUsers)
-  app.Get(    "/users/:id", getSingleUser)
-  app.Post(   "/users",     CreateUser)
-  app.Put(    "/users/:id", UpdateUser)
-  app.Delete( "/users/:id", DeleteUser)
 
-  app.Get("/users/:id/today", getUsersToday)
+  //----- Dealing with the User Auth -----------//
+  app.Post(   "/signup",    CreateUser)
+  app.Post(   "/login",     LoginUser)
+  app.Get(    "/home",      getUserSession)
+
+  //User Settings
+  user.Put(    "/:id", UpdateUser)
+  user.Delete( "/:id", DeleteUser)
+  user.Get(    "/:id", getSingleUser)
+
+
+  user.Get("/:id/today", getUsersToday)
 
   //---------- Weights/Sleep -------------//
+  user.Post(  "/:id/weight", createWorkout)
+  user.Get(   "/:id/weight", getTodayWorkouts)
 
+  user.Post(  "/:id/sleep", createSleep)
+  user.Get(   "/:id/sleep", getTodaySleep)
   //---------- Meals/Water -------------//
-  app.Post("/users/:id/meals", createMeal)
-  app.Get("/users/:id/meals", getTodayMeals)
+  user.Post(  "/:id/meals", createMeal)
+  user.Get(   "/:id/meals", getTodayMeals)
 
+  user.Post(  "/:id/water", createWater)
+  user.Get(   "/:id/water", getTodayWater)
 }
