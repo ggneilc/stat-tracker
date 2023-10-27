@@ -9,6 +9,7 @@ func SetupRoutes (app *fiber.App)  {
 
   //--Purely Testing--//
   app.Get(    "/users",     getAllUsers)
+  app.Get("/ping", Ping)
 
   //----- Dealing with the User Auth -----------//
   app.Post(   "/signup",    CreateUser)

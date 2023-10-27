@@ -1,6 +1,7 @@
 package controller
 
 import (
+  "fmt"
   "strconv"
   "log"
   "gorm.io/gorm"
@@ -14,10 +15,14 @@ var store = session.New()
 
 //struct to validate user
 type AuthUser struct {
-  Email string `json:"email"`
-  Pass  string `json:"pass"`
+  Username string `json:"Username"`
+  Pass  string `json:"Password"`
 }
 
+func Ping(c *fiber.Ctx) error {
+  fmt.Println("ping!")
+  return c.SendString("Ping!")
+}
 
 /* ---------------- CRUD Functionality for User ------------------ */
 //Create User out of JSON/text/html -> signup
@@ -84,12 +89,12 @@ func LoginUser(c *fiber.Ctx) error {
 		return c.SendString("Error parsing body")
 	}
 
+
   database.DB.Find(&user, 
-  "Email = ? AND Password = ?",
-  Authuser.Email, Authuser.Pass )
+  "Username = ? AND Password = ?",
+  Authuser.Username, Authuser.Pass )
 
   //we are storing type User 
-  store.RegisterType(user)
 
   ses, err := store.Get(c)
   if err != nil {
@@ -97,13 +102,13 @@ func LoginUser(c *fiber.Ctx) error {
   }
 
   //key - value
-  ses.Set("user", user)
+  ses.Set("user_id", user.ID)
 
   if err := ses.Save(); err != nil {
     return err
   }
 
-  return c.SendString("Successfully Validated User")
+  return c.JSON(Authuser)
 }
 
 func getUserSession(c *fiber.Ctx) error {
@@ -113,12 +118,16 @@ func getUserSession(c *fiber.Ctx) error {
     return err
   }
 
-  //store.get returns type interface{} (generic)
-  userInter := ses.Get("user")
-  user := userInter.(*database.User) //assert type User
+  //ses.get returns type interface{} (generic)
+  userID := ses.Get("user_id")
+
+  user := new(database.User)
+  //user := userInter.(*database.User) //assert type User
+  fmt.Println(userID)
 
   //testing
-  database.DB.Preload("CurrentDay.Meals").Find(&user, user.ID)
+  //database.DB.Preload("CurrentDay").Find(&user, user.ID)
+  database.DB.Preload("CurrentDay").Find(&user, userID)
 
   return c.JSON(user)
 }
@@ -308,7 +317,7 @@ func getTodaySleep(c *fiber.Ctx) error {
 }
 
 
-/* ----------------- --------------- Services ----------------- ----------------- */
+/* -------------------------- Services ---------------------------- */
 
 /* ----------------  ------------------ */
 

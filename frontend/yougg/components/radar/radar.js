@@ -5,10 +5,13 @@ import { StyleSheet, Text, View, Button } from 'react-native';
 
 //todo & radar
 export const Radar = () => {
+  
+
+
   return (
     <View style={styles.container}>
 
-      <View style={[styles.item, styles.todo ]}>
+      <View  style={[styles.item, styles.todo ]}>
         <Text> todo </Text>
       </View>
 
@@ -26,7 +29,6 @@ const styles = StyleSheet.create({
     borderRadius: '10px',
     backgroundColor: '#111',
     alignContent: 'stretch',
- //   alignItems: 'center'
   },
 
   item: {

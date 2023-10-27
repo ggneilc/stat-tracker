@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { HomeScreen, SettingsScreen } from './screens/home'
+import { HomeScreen, SettingsScreen } from './screens/home';
+import { MealScreen } from './screens/meals';
 
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { useWindowDimensions } from 'react-native';
@@ -8,7 +9,7 @@ import { useWindowDimensions } from 'react-native';
 //Scenes (Screens) to render
 const renderScene = SceneMap({
   first: SettingsScreen,
-  second: SettingsScreen,
+  second: MealScreen,
   third: HomeScreen,
   fourth: SettingsScreen,
   fifth: SettingsScreen,
