@@ -2,7 +2,7 @@ package database
 
 import (
   "fmt"
-  "gorm.io/driver/postgres"
+  "gorm.io/driver/mysql"
   "gorm.io/gorm"
 )
 
@@ -12,8 +12,8 @@ var DB *gorm.DB
 func Connect() error {
   var err error
   
-  dsn :="host=db.bjvxzmradufiwzcylczl.supabase.co user=postgres password=Piss4Brains! dbname=postgres port=5432 sslmode=disable"
-  db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+  dsn :="neil:password1@tcp(127.0.0.1:3306)/yougg?charset=utf8mb4&parseTime=True&loc=Local"
+  db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
     DryRun: false,
   })
   if err != nil {
