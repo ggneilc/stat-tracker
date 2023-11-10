@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "yougg",
-    "slug": "yougg",
+    "name": "frontend",
+    "slug": "frontend",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,12 +25,6 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "d8b97f45-e588-4963-a72c-8bf0a6afa33e"
-      }
-    },
-    "owner": "neil.churro"
+    }
   }
 }

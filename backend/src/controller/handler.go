@@ -21,7 +21,7 @@ type AuthUser struct {
 
 func Ping(c *fiber.Ctx) error {
   fmt.Println("ping!")
-  return c.SendString("Ping!")
+  return c.SendString("ping!")
 }
 
 /* ---------------- CRUD Functionality for User ------------------ */
@@ -36,7 +36,9 @@ func CreateUser(c *fiber.Ctx) error {
   database.DB.Create(&user)
   createNewDayForUser(user)
 
-  return c.SendString("Successfuly Created User")
+  return c.JSON(fiber.Map{
+    "Message": "success",
+  })
 }
 //Update User setting Information
 func UpdateUser(c *fiber.Ctx) error {
@@ -78,6 +80,9 @@ func DeleteUser(c *fiber.Ctx) error {
   return c.SendString("Successfuly deleted user")
 }
 
+type Msg struct {
+  Message string
+}
 
 //---------- User Auth ----------//
 func LoginUser(c *fiber.Ctx) error {
@@ -90,11 +95,15 @@ func LoginUser(c *fiber.Ctx) error {
 	}
 
 
-  database.DB.Find(&user, 
+  result := database.DB.First(&user, 
   "Username = ? AND Password = ?",
   Authuser.Username, Authuser.Pass )
 
-  //we are storing type User 
+  if result.RowsAffected == 0 {
+    return c.JSON(fiber.Map{
+      "Message": "failure",
+    })
+  }
 
   ses, err := store.Get(c)
   if err != nil {
@@ -108,7 +117,11 @@ func LoginUser(c *fiber.Ctx) error {
     return err
   }
 
-  return c.JSON(Authuser)
+  data := Msg{
+    Message: "success",
+  }
+
+  return c.JSON(data)
 }
 
 func getUserSession(c *fiber.Ctx) error {
@@ -120,6 +133,9 @@ func getUserSession(c *fiber.Ctx) error {
 
   //ses.get returns type interface{} (generic)
   userID := ses.Get("user_id")
+  if userID == nil {
+    return c.SendString("no user found")
+  }
 
   user := new(database.User)
   //user := userInter.(*database.User) //assert type User
@@ -127,7 +143,7 @@ func getUserSession(c *fiber.Ctx) error {
 
   //testing
   //database.DB.Preload("CurrentDay").Find(&user, user.ID)
-  database.DB.Preload("CurrentDay").Find(&user, userID)
+  database.DB.Preload("CurrentDay").First(&user, userID)
 
   return c.JSON(user)
 }
