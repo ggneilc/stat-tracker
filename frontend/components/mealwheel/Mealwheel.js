@@ -2,15 +2,18 @@ import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, TextInput, View, Button, Alert } from 'react-native';
 
 
+/*
+id: result.ID,
+          foodname: result.FoodName,
+          calories: result.Calories,
+          protein: result.Protein,
+          dayid: result.DayID,
+*/
+
 export const Mealwheel = () => {
-
-
   return (
     <View style={styles.container}>
       <View style={styles.item}>
-          <Text>Food:</Text>
-          <Text>Calories:</Text>
-          <Text>Protein:</Text>
         <Button 
           title="Submit"
         />

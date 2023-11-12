@@ -17,7 +17,7 @@ export const HomeScreen = () => {
     try {
       const response = await fetch("http://10.9.243.45:3000/home");
       const result = await response.json();
-      console.log(result);
+      console.log("Getting Home: "+result);
       dispatch(setUser({
         id: result.ID,
         username: result.Username,

@@ -6,7 +6,37 @@ import { Mealwheel } from '../components/mealwheel/Mealwheel';
 import { Plate } from '../components/plate/Plate';
 import { Pastmeals } from '../components/pastmeals/Pastmeals';
 
+//import function for setting user 
+import { useDispatch } from 'react-redux';
+import { setUserMeals } from '../features/user/userSlice';
+
+import { useSelector } from 'react-redux';
+import { selectUser, selectUserMeals } from '../features/user/userSlice';
+
 export const MealScreen = () => {
+  const dispatch = useDispatch();
+
+  const user = useSelector(selectUser);
+  const userMeals = useSelector(selectUserMeals);
+
+  const retrieveUserMeals = async () => {
+    try {
+      const url = "http://10.9.243.45:3000/users/"+user.id+"/meals";
+      const response = await fetch(url);
+      const result = await response.json();
+      console.log("result of backend: "+result);
+      dispatch(setUserMeals({ meals: result }));
+    } catch (error) {
+      console.error('error fetching user data:', error);
+    }
+  };
+
+  React.useEffect(() => {
+    if (user !== null){
+      retrieveUserMeals();
+    }
+  }, [user]);
+
   return (
     <View style={styles.container}>
       <Infosection />

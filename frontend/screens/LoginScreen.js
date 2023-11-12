@@ -2,8 +2,8 @@ import * as React from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 
 export const LoginScreen = ({ navigation }) => {
-  const [username, onChangeUsername] = React.useState('username');
-  const [password, onChangePassword] = React.useState('password');
+  const [username, onChangeUsername] = React.useState('');
+  const [password, onChangePassword] = React.useState('');
 
 
   const onSubmit = async () => {
@@ -27,7 +27,7 @@ export const LoginScreen = ({ navigation }) => {
   //Each <TextInput> can become a component for Login/CreateAccount
   return (
     <View style={styles.container}>
-      <Text style={styles.text}> Login screen ! </Text>
+      <Text style={styles.text}> You.GG </Text>
       <TextInput 
         style={styles.input}
         placeholder='username'
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     gap: 10,
     backgroundColor: '#202020',
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
   },
 
   input: {
@@ -71,4 +71,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
   },
+
+  text: {
+    fontSize: 28,
+    color: '#fff'
+  }
 });
