@@ -1,3 +1,4 @@
+//Handles all functions related to user authentication
 package controller 
 
 import (

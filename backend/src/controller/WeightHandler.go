@@ -1,3 +1,4 @@
+//Handles all functions related to Weights & Sleep
 package controller
 
 import (

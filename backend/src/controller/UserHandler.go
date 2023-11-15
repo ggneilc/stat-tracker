@@ -1,4 +1,4 @@
-
+//Handles all functions for user CRUD operations
 package controller
 
 import (

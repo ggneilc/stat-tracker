@@ -1,3 +1,4 @@
+//Handles all functions related to Meals & Water
 package controller
 
 import (

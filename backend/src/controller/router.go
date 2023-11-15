@@ -1,3 +1,4 @@
+//Adds all routes to the Http server
 package controller
 
 import (

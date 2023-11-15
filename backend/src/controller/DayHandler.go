@@ -1,3 +1,4 @@
+//Handles all functions for User's Days
 package controller
 
 import (
