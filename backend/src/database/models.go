@@ -24,7 +24,7 @@ type User struct {
 type Day struct {
   gorm.Model
 
-  UserID  uint
+  UserID  uint //this user id will show this day in both current & past days
 
   Meals   []Meal    `gorm:"foreignkey:DayID;auto_association:true"`
   Water   []Water   `gorm:"foreignkey:DayID"`

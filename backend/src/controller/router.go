@@ -9,7 +9,8 @@ func SetupRoutes (app *fiber.App)  {
 
   //--Purely Testing--//
   app.Get(    "/users",     getAllUsers)
-  app.Get("/ping", Ping)
+  app.Get(    "/ping",      Ping)
+  app.Get( "/createDays", createNewDayForAllUser)
 
   //----- Dealing with the User Auth -----------//
   app.Post(   "/signup",    CreateUser)
@@ -23,6 +24,7 @@ func SetupRoutes (app *fiber.App)  {
 
 
   user.Get("/:id/today", getUsersToday)
+  user.Get("/:id/past", getUsersPastDays)
 
   //---------- Weights/Sleep -------------//
   user.Post(  "/:id/weight", createWorkout)

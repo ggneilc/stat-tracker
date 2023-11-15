@@ -1,70 +1,11 @@
 package controller
 
 import (
+  "fmt"
   "strconv"
-  "log"
-  "gorm.io/gorm"
   "github.com/gofiber/fiber/v2"
   "github.com/ggneilc/stat-tracker/src/database"
 )
-
-/* ---------------- CRUD Functionality for User ------------------ */
-//Create User out of JSON/text/html -> signup
-func CreateUser(c *fiber.Ctx) error {
-  user := new(database.User)
-
-	if err := c.BodyParser(user); err != nil {
-		log.Println(err)
-		return c.SendString("Error parsing body")
-	}
-  database.DB.Create(&user)
-  createNewDayForUser(user)
-
-  return c.JSON(fiber.Map{
-    "Message": "success",
-  })
-}
-//Update User setting Information
-func UpdateUser(c *fiber.Ctx) error {
-  tempId := c.Params("id")
-  user := new(database.User)
-  //  Parse body into product struct
-	if err := c.BodyParser(user); err != nil {
-		log.Println(err)
-		return c.SendString("Error parsing body")
-	}
-  id, err := strconv.Atoi(tempId)
-  if err != nil {
-    return c.SendString("error getting Id")
-  }
-  user.ID = uint(id)
-  database.DB.Save(&user)
-  return c.SendString("Successfully updated User")
-}
-//Get All Users
-func getAllUsers(c *fiber.Ctx) error {
-  var users []database.User
-  result := database.DB.Find(&users)
-  if result.Error != nil {
-    return c.SendString("Cound not get users")
-  }
-  return c.JSON(users)
-}
-//Get Single User
-func getSingleUser(c *fiber.Ctx) error {
-  id := c.Params("id")
-  var user database.User
-  database.DB.First(&user, id)
-  return c.JSON(user)
-}
-//Delete User
-func DeleteUser(c *fiber.Ctx) error {
-  id := c.Params("id")
-  database.DB.Delete(&database.User{}, id)
-  return c.SendString("Successfuly deleted user")
-}
-
-
 
 
 /* ---------------- CRUD Functionality for Stat Entry ------------------ */
@@ -89,6 +30,21 @@ func getUsersToday(c *fiber.Ctx) error {
   return c.JSON(user)
 }
 
+func getUsersPastDays(c *fiber.Ctx) error {
+  //get user by id
+  id, err := strconv.Atoi(c.Params("id"))
+  if err != nil {
+    return c.SendString("error parsing ID")
+  }
+  var user database.User
+  
+  //Find the user, load all their information
+  //database.DB.Preload("CurrentDay").Preload(clause.Associations).Find(&user, id)
+  database.DB.Preload("PastDays").Find(&user, id)
+
+  return c.JSON(user)
+}
+
 func createNewDayForUser(user *database.User) {
   var newDay = new(database.Day)
   newDay.UserID = user.ID;
@@ -96,156 +52,56 @@ func createNewDayForUser(user *database.User) {
   database.DB.Create(&newDay)
 }
 
+/**
+* Need to: 
+* 1. get list of all users
+* 2. move current day to past day
+* 3. create new day for current day
 
 
+* ##KNOWN BUG: current day always shows up in past day list. 
+*/
+func createNewDayForAllUser(c *fiber.Ctx) error {
+  var users []database.User
 
+  //query all users
+  if err := database.DB.Find(&users).Error; err != nil {
+    fmt.Println("Error querying users:", err)
+    return c.SendString("error querying")
+  }
 
+  for _, user := range users {
+    //move current day to past day
+    if user.CurrentDay.ID != 0 {
+      user.PastDays = append(user.PastDays, user.CurrentDay)
+      user.CurrentDay = database.Day{} // Reset the current day
+    }
 
-//Have a user Create/Update/Delete/List Meals
-func createMeal(c *fiber.Ctx) error {
+    //create new day for user
+    newDay := database.Day{UserID: user.ID}
+    //set to users current day
+    
+    if err := database.DB.Create(&newDay).Error; err != nil {
+      fmt.Printf("Error creating a new day for user %d: %s\n", user.ID, err)
+    } else {
+        // Update user's current day
+        user.CurrentDay = newDay
+        if err := database.DB.Save(&user).Error; err != nil {
+            fmt.Printf("Error updating user's current day: %s\n", err)
+            // Handle the error as needed
+        } else {
+            fmt.Printf("Created a new day for user: %d\n", user.ID)
+        }
+    }  
+  }
 
-  id := c.Params("id")
-  var user database.User
-  database.DB.First(&user, id)
+  return c.SendString("Created all days")
 
-  database.DB.Preload("CurrentDay.Meals").Find(&user, id)
-
-  meal := new(database.Meal)
-	if err := c.BodyParser(meal); err != nil {
-		log.Println(err)
-		return c.SendString("Error parsing body")
-	}
-  meal.DayID = user.CurrentDay.ID;
-
-  database.DB.Create(&meal)
-
-  //add meal to current day info
-  database.DB.Model(&user).Association("CurrentDay.Meals").Append(&meal)
-  database.DB.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&user)
-
-  //returns the newly created meal as json
-  return c.JSON(meal)
-}
-
-//Get User Meals
-func getTodayMeals(c *fiber.Ctx) error {
-  id := c.Params("id")
-  var user database.User
-  database.DB.Preload("CurrentDay.Meals").First(&user, id)
-
-  return c.JSON(user.CurrentDay.Meals)
-}
-
-
-//Have a user Create/Update/Delete/List Weights
-func createWorkout(c *fiber.Ctx) error {
-  //get user by ID
-  id := c.Params("id")
-  db := database.DB
-
-  var user database.User
-  db.First(&user, id)
-
-  db.Preload("CurrentDay.Weights").Find(&user, id)
-
-  workout := new(database.Weight)
-	if err := c.BodyParser(workout); err != nil {
-		log.Println(err)
-		return c.SendString("Error parsing body")
-	}
-  workout.DayID = user.CurrentDay.ID;
-
-  database.DB.Create(&workout)
-
-  //add meal to current day info
-  database.DB.Model(&user).Association("CurrentDay.Weights").Append(&workout)
-  database.DB.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&user)
-
-  //returns the newly created meal as json
-  return c.JSON(workout)
 }
 
 
-func getTodayWorkouts(c *fiber.Ctx) error {
-  id := c.Params("id")
-
-  var user database.User
-  database.DB.Preload("CurrentDay.Weights").First(&user, id)
-  
-  return c.JSON(user.CurrentDay.Weights)
-}
-//Have a user Create/Update/Delete/List Water
-func createWater(c *fiber.Ctx) error {
-  id := c.Params("id")
-  db := database.DB
-
-  var user database.User
-  db.First(&user, id)
-
-  db.Preload("CurrentDay.Water").Find(&user, id)
-
-  water := new(database.Water)
-	if err := c.BodyParser(water); err != nil {
-		log.Println(err)
-		return c.SendString("Error parsing body")
-	}
-  water.DayID = user.CurrentDay.ID;
-
-  database.DB.Create(&water)
-
-  //add meal to current day info
-  database.DB.Model(&user).Association("CurrentDay.Water").Append(&water)
-  database.DB.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&user)
-
-  //returns the newly created meal as json
-  return c.JSON(water)
-}
-
-func getTodayWater(c *fiber.Ctx) error {
-  id := c.Params("id")
-  var user database.User
-  database.DB.Preload("CurrentDay.Water").First(&user, id)
-
-  return c.JSON(user.CurrentDay.Water)
-}
-
-//Have a user Create/Update/Delete/List Sleep
-func createSleep(c *fiber.Ctx) error {
-  id := c.Params("id")
-  db := database.DB
-
-  var user database.User
-  db.First(&user, id)
-
-  db.Preload("CurrentDay.Sleep").Find(&user, id)
-
-  sleep := new(database.Sleep)
-	if err := c.BodyParser(sleep); err != nil {
-		log.Println(err)
-		return c.SendString("Error parsing body")
-	}
-  sleep.DayID = user.CurrentDay.ID;
-
-  database.DB.Create(&sleep)
-
-  //add meal to current day info
-  database.DB.Model(&user).Association("CurrentDay.Water").Append(&sleep)
-  database.DB.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&user)
-
-  //returns the newly created meal as json
-  return c.JSON(sleep)
-}
-
-func getTodaySleep(c *fiber.Ctx) error {
-  id := c.Params("id")
-  var user database.User
-  database.DB.Preload("CurrentDay.Sleep").First(&user, id)
-
-  return c.JSON(user.CurrentDay.Sleep)
-}
 
 
-/* -------------------------- Services ---------------------------- */
 
-/* ----------------  ------------------ */
+
 
