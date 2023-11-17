@@ -10,6 +10,7 @@ import (
 
 
 /* ---------------- CRUD Functionality for Stat Entry ------------------ */
+
 //---------- User's Day ----------//
 func getUsersToday(c *fiber.Ctx) error {
   //get user by id
@@ -31,6 +32,7 @@ func getUsersToday(c *fiber.Ctx) error {
   return c.JSON(user)
 }
 
+//---------- User's Past Days ----------//
 func getUsersPastDays(c *fiber.Ctx) error {
   //get user by id
   id, err := strconv.Atoi(c.Params("id"))
@@ -46,6 +48,7 @@ func getUsersPastDays(c *fiber.Ctx) error {
   return c.JSON(user)
 }
 
+//Create a day for a new User 
 func createNewDayForUser(user *database.User) {
   var newDay = new(database.Day)
   newDay.UserID = user.ID;
@@ -54,12 +57,10 @@ func createNewDayForUser(user *database.User) {
 }
 
 /**
-* Need to: 
+* Create New day for All Users
 * 1. get list of all users
 * 2. move current day to past day
 * 3. create new day for current day
-
-
 * ##KNOWN BUG: current day always shows up in past day list. 
 */
 func createNewDayForAllUser(c *fiber.Ctx) error {
@@ -99,10 +100,5 @@ func createNewDayForAllUser(c *fiber.Ctx) error {
   return c.SendString("Created all days")
 
 }
-
-
-
-
-
 
 

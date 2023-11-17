@@ -18,7 +18,7 @@ func main() {
 
   app := fiber.New()
 
-// Start cron job
+  //Start cron job
 	go startCronJob()
 
   app.Static("/","./frontend")
@@ -30,6 +30,7 @@ func main() {
 }
 
 
+//Runs goroutine to create new days at midnight every night
 func startCronJob() { 
   c := cron.New()
 
