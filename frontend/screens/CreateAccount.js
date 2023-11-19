@@ -62,6 +62,14 @@ export const CreateAccount = ({ navigation }) => {
   //Each <TextInput> can become a Component for Login/CreateAccount
   return (
     <View style={styles.container}>
+      <View style={styles.bgBlock}> 
+
+      </View>
+      <View style={styles.bgBlockBlack}> 
+
+      </View>
+
+      <View style={styles.box}>
       <Text style={styles.text}> Create Account ! </Text>
 
       <TextInput 
@@ -107,6 +115,7 @@ export const CreateAccount = ({ navigation }) => {
         title="Log in"
         onPress={onSubmit}
       />
+      </View>
     </View>
   );
 }
@@ -115,22 +124,65 @@ export const CreateAccount = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
+    overflow: 'hidden',
     flex: 1,
     paddingVertical: 35,
     paddingHorizontal: 20,
     gap: 10,
-    backgroundColor: '#202020',
+    backgroundColor: '#000',
     alignItems: 'center',
     justifyContent: 'flex-start',
   },
 
+  box: {
+    marginTop: 75,
+    alignItems: 'center',
+    borderRadius: 2,
+    width: 250,
+    height: 500,  
+    backgroundColor: 'rgba(22, 21, 30, 0.80)'
+  },
+
   input: {
-    color: '#fff',
-    backgroundColor: '#101010',
+    color: '#000',
+    backgroundColor: '#FAF0F6',
+
     height: 40,
     width: 200,
     margin: 12,
     borderWidth: 1,
     padding: 10,
+
+
+    shadowOpacity: 0.2,
+    shadowColor: '#111',
+    shadowOffset: {width: -2, height: 4},
+    shadowRadius: 3,
+    borderRadius: 2,
   },
+
+  bgBlock: {
+    position: 'absolute',
+    top: -65,
+    left: -100,
+    width: 350,
+    height: 200,
+    backgroundColor: '#DBDBDA',
+    transform: [{ rotate: '-37.976deg'}]
+  },
+
+  bgBlockBlack: {
+    position: 'absolute',
+    top: 95,
+    width: 800,
+    height: 300,
+    backgroundColor: '#000',
+    transform: [{ rotate: '-37.976deg'}]
+  },
+
+  text: {
+    paddingTop: 5,
+    color: '#fff',
+    fontSize: 20
+  }
 });

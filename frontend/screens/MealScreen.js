@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button, Modal, Pressable } from 'react-native';
 
 import { Infosection } from '../components/infosection/Infosection';
 import { Mealwheel } from '../components/mealwheel/Mealwheel';
@@ -8,24 +8,29 @@ import { Pastmeals } from '../components/pastmeals/Pastmeals';
 
 //import function for setting user 
 import { useDispatch } from 'react-redux';
-import { setUserMeals } from '../features/user/userSlice';
+import { setPastDays, setUserMeals } from '../features/user/userSlice';
 
 import { useSelector } from 'react-redux';
-import { selectUser, selectUserMeals } from '../features/user/userSlice';
+import { selectUser } from '../features/user/userSlice';
 
 export const MealScreen = () => {
   const dispatch = useDispatch();
 
   const user = useSelector(selectUser);
-  const userMeals = useSelector(selectUserMeals);
 
   const retrieveUserMeals = async () => {
     try {
-      const url = "http://10.9.243.45:3000/users/"+user.id+"/meals";
-      const response = await fetch(url);
-      const result = await response.json();
-      console.log("result of backend: "+result);
-      dispatch(setUserMeals({ meals: result }));
+      const url = "http://10.9.243.45:3000/users/"+user.id;
+
+      const mealresponse = await fetch(url+"/meals");
+      const mealresult = await mealresponse.json();
+      dispatch(setUserMeals({ meals: mealresult }));
+
+      const dayresponse = await fetch(url+"/past");
+      const dayresult = await dayresponse.json();
+      dispatch(setPastDays({ days: dayresult }));
+
+      console.log("set userMeals & days in MealScreen")
     } catch (error) {
       console.error('error fetching user data:', error);
     }
@@ -41,7 +46,6 @@ export const MealScreen = () => {
     <View style={styles.container}>
       <Infosection />
       <Mealwheel />
-      <Plate />
       <Pastmeals />
     </View>
   );

@@ -3,7 +3,6 @@ package controller
 
 import (
   "fmt"
-  "strconv"
   "github.com/gofiber/fiber/v2"
   "github.com/ggneilc/stat-tracker/src/database"
 )
@@ -14,10 +13,7 @@ import (
 //---------- User's Day ----------//
 func getUsersToday(c *fiber.Ctx) error {
   //get user by id
-  id, err := strconv.Atoi(c.Params("id"))
-  if err != nil {
-    return c.SendString("error parsing ID")
-  }
+  id := c.Params("id")
   var user database.User
   
   //Find the user, load all their information
@@ -33,19 +29,13 @@ func getUsersToday(c *fiber.Ctx) error {
 }
 
 //---------- User's Past Days ----------//
-func getUsersPastDays(c *fiber.Ctx) error {
-  //get user by id
-  id, err := strconv.Atoi(c.Params("id"))
-  if err != nil {
-    return c.SendString("error parsing ID")
-  }
-  var user database.User
-  
-  //Find the user, load all their information
-  //database.DB.Preload("CurrentDay").Preload(clause.Associations).Find(&user, id)
-  database.DB.Preload("PastDays").Find(&user, id)
 
-  return c.JSON(user)
+func getUsersPastDays(c *fiber.Ctx) error {
+  id := c.Params("id")
+  var user database.User
+  //currently gets .Meals, will need methods for different preloads
+  database.DB.Preload("PastDays.Meals").Find(&user, id)
+  return c.JSON(user.PastDays)
 }
 
 //Create a day for a new User 

@@ -16,9 +16,10 @@ const styles = StyleSheet.create({
  
   container: {
     flex: 1,
-    flexDirection: 'row',
     alignContent: 'stretch',
     borderRadius: '10px',
+    backgroundColor: '#101010',
+    width: 350
   },
 
   item: {

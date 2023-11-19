@@ -1,14 +1,15 @@
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, View, Button, TextInput } from 'react-native';
+import { StyleSheet, FlatList, Text, View, Button, TextInput } from 'react-native';
 
 //to fetch user id url
 import { useSelector } from 'react-redux';
-import { selectUser, addMeal } from '../../features/user/userSlice';
+import { selectUser, selectUserMeals, addMeal } from '../../features/user/userSlice';
 import { useDispatch } from 'react-redux';
 
 export const Plate = () => {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
+  const userMeals = useSelector(selectUserMeals);
 
   const [foodName, onChangeFoodName] = React.useState('');
   const [calories, onChangeCalories] = React.useState('');
@@ -50,38 +51,64 @@ export const Plate = () => {
   }
 
 
+  const renderMealItem = ({ item }) => (
+    <View style={styles.meal}>
+      <Text style={styles.text}>{item.FoodName}</Text>
+      <Text style={styles.text}>Calories: {item.Calories}</Text>
+      <Text style={styles.text}>Protein: {item.Protein}</Text>
+      {/* Add more details if needed */}
+    </View>
+  );
 
   return (
     <View style={styles.container}>
       <View style={styles.item}>
 
-        <Text>Food:</Text>
+        <View style={styles.inputRow}>
+        <Text style={styles.info}>Food:</Text>
         <TextInput 
           style={styles.input}
           placeholder=''
           onChangeText={onChangeFoodName}
           value={foodName}/>
+        </View>
 
-        <Text>Calories: </Text>
+
+        <View style={styles.inputRow}>
+        <Text style={styles.info}>Calories: </Text>
         <TextInput 
           style={styles.input}
           placeholder=''
+          keyboardType='numeric'
           onChangeText={onChangeCalories}
           value={calories}/>
+        </View>
 
-        <Text>Protein:</Text>
+
+        <View style={styles.inputRow}>
+        <Text style={styles.info}>Protein:</Text>
         <TextInput 
           style={styles.input}
           placeholder=''
+          keyboardType='numeric'
           onChangeText={onChangeProtein}
           value={protein}/>
+        </View>
 
 
         <Button
-          style={styles.meal}
           title="new meal"
           onPress={onSubmit}
         />
+
+
+        {userMeals && (
+          <FlatList
+            data={userMeals}
+            renderItem={renderMealItem}
+            keyExtractor={(item) => item.ID.toString()} // Provide a unique key for each item
+          />
+        )}
       </View>
     </View>
   );
@@ -91,7 +118,7 @@ export const Plate = () => {
 const styles = StyleSheet.create({
  
   container: {
-    flex: 2,
+    flex: 3,
     flexDirection: 'row',
     height: 50, 
     borderRadius: '10px',
@@ -99,26 +126,46 @@ const styles = StyleSheet.create({
   },
 
   item: {
-    position: 'relative',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
     margin: 10,
     width: '100%',
     backgroundColor: '#252525',
     borderRadius: '10px'
   },
 
-  input: {
-    left: 70,
-    top: -18,
-    color: '#fff',
-    backgroundColor: '#101010',
-    height: 20,
-    width: 200,
-    borderWidth: 1,
-    padding: 10,
+  inputRow: {
+    flexDirection: 'row',
+    width: '100%',
   },
 
+  info: {
+    color: '#fff',
+    fontSize: 18,
+    padding: 10
+  },
+
+
+
+  input: {
+    marginTop: 5,
+    color: '#fff',
+    backgroundColor: '#101010',
+    height: 35,
+    width: 150,
+    borderWidth: 1,
+    padding: 5,
+  },
+ 
   meal: {
-    left: 100
+    margin: 10,
+    width: 100,
+    height: 50,
+    backgroundColor: '#101010',
+  },
+
+  text: {
+    color: '#fff'
   }
 
 })
