@@ -1,18 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import { StyleSheet, Text, TextInput, View, Button, Alert, Modal, Pressable } from 'react-native';
+import { VictoryPie, VictoryChart, VictoryTheme } from "victory-native";
+
+import { Svg, Circle } from 'react-native-svg';
 
 import { Plate } from '../plate/Plate'
 
 import { useSelector } from 'react-redux';
 import { selectUserMeals } from '../../features/user/userSlice';
-
-/*
-id: result.ID,
-          foodname: result.FoodName,
-          calories: result.Calories,
-          protein: result.Protein,
-          dayid: result.DayID,
-*/
 
 export const Mealwheel = () => {
   const userMeals = useSelector(selectUserMeals);
@@ -21,7 +16,6 @@ export const Mealwheel = () => {
   const [totalPro, setTotalPro] = React.useState(0);
 
   //Calculate total calories
-  //
   const calcCals = (meals) => {
     let sum = 0;
     let cum = 0;
@@ -37,18 +31,34 @@ export const Mealwheel = () => {
     calcCals(userMeals)
   }, [userMeals])
 
+  const data = [
+    { x: "Eaten", y: totalCals},
+    { x: "toEat", y: 1300}
+  ]
+
 
   return (
     <View style={styles.container}>
 
       <Pressable
-        style={{paddingTop: 50}}
         onPress={() => setModalVisidble(true)}>
-        <View style={styles.item}>
-            <Text style={styles.words}> cals eaten: {totalCals} </Text>
-            <Text style={styles.words}> protein: {totalPro}g </Text>
-        </View>
+        <Svg  width={450} height={450}>
+          <Circle cx={225} cy={205} r={60} fill="#101010" stroke={'#DBDBDA'}/>
+
+          <VictoryPie
+            width={450}
+            innerRadius={100}
+            data={data} 
+            style={{
+              data: { fill: ({ datum }) => datum.x === "Eaten" ? "#72FF78" : "#c43a31"},
+              labels: { fill: "#dcdab7"},
+              parent: { }
+            }}
+          />
+        </Svg>
       </Pressable>
+
+      <Text style={styles.words}> cals: {totalCals} </Text>
 
       <Modal
         animationType='slide'
@@ -74,10 +84,10 @@ const styles = StyleSheet.create({
  
   container: {
     flex: 5,
-    flexDirection: 'row',
-    alignContent: 'stretch',
+    alignContent: 'center',
     borderRadius: '10px',
-    backgroundColor: '#000'
+    backgroundColor: '#101010',
+    width: 450,
   },
 
 
@@ -100,21 +110,15 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 35,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
   },
 
   words: {
-    color: '#fff',
-    fontSize: 28,
-    top: 50,
-    left: 80
-  }
+    position: 'absolute',
+    color: '#DBDBDA',
+    fontSize: 22,
+    top: 190,
+    left: 170
+  },
+
 
 })

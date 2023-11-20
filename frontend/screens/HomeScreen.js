@@ -36,10 +36,15 @@ export const HomeScreen = () => {
     retrieveUser();
   }, []);
 
+
+  const radarChartData = [
+    { Eating: 5, Sleep: 5, Water: 5, Weights: 5 },
+  ];
+
   return (
     <View style={styles.container}>
       <Navbar />
-      <Radar />
+      <Radar data={radarChartData}/>
       <Heatmap />
       <Quest />
     </View>
@@ -52,7 +57,7 @@ const styles = StyleSheet.create({
     paddingVertical: 35,
     paddingHorizontal: 20,
     gap: 10,
-    backgroundColor: '#202020',
+    backgroundColor: '#101010',
     alignItems: 'center',
     justifyContent: 'flex-start',
   },

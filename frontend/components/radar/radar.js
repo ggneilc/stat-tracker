@@ -1,8 +1,6 @@
 import React from 'react'
 import { StyleSheet, Text, View, Button } from 'react-native';
 
-
-
 //todo & radar
 export const Radar = () => {
   

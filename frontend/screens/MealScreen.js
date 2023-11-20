@@ -44,6 +44,10 @@ export const MealScreen = () => {
 
   return (
     <View style={styles.container}>
+
+      <View style={styles.stripe}>
+
+      </View>
       <Infosection />
       <Mealwheel />
       <Pastmeals />
@@ -57,9 +61,17 @@ const styles = StyleSheet.create({
     paddingVertical: 35,
     paddingHorizontal: 20,
     gap: 10,
-    backgroundColor: '#202020',
+    backgroundColor: '#101010',
     alignItems: 'center',
     justifyContent: 'flex-start',
+  },
+
+  stripe: {
+    color: '#DBDBDA',
+    position: 'absolute',
+    top: 100,
+    width: 800,
+    height: 200,
   },
 
   text: {

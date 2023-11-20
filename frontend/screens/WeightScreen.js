@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     paddingVertical: 35,
     paddingHorizontal: 20,
     gap: 10,
-    backgroundColor: '#202020',
+    backgroundColor: '#101010',
     alignItems: 'center',
     justifyContent: 'flex-start',
   },

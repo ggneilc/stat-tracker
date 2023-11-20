@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, FlatList, Text, View, Button, TextInput } from 'react-native';
+import { StyleSheet, FlatList, Image, Text, View, Button, TextInput } from 'react-native';
 
 //to fetch user id url
 import { useSelector } from 'react-redux';
@@ -53,9 +53,13 @@ export const Plate = () => {
 
   const renderMealItem = ({ item }) => (
     <View style={styles.meal}>
-      <Text style={styles.text}>{item.FoodName}</Text>
-      <Text style={styles.text}>Calories: {item.Calories}</Text>
-      <Text style={styles.text}>Protein: {item.Protein}</Text>
+      <Image
+        style={styles.image}
+        source={require('../../assets/food.png')} />
+      <View style={{padding: 2, alignSelf: 'center'}}> 
+        <Text style={styles.nutrients}>{item.Calories} C</Text>
+        <Text style={styles.nutrients}>{item.Protein} P</Text>
+      </View>
       {/* Add more details if needed */}
     </View>
   );
@@ -107,6 +111,7 @@ export const Plate = () => {
             data={userMeals}
             renderItem={renderMealItem}
             keyExtractor={(item) => item.ID.toString()} // Provide a unique key for each item
+            numColumns={3}
           />
         )}
       </View>
@@ -126,7 +131,6 @@ const styles = StyleSheet.create({
   },
 
   item: {
-    flexDirection: 'row',
     flexWrap: 'wrap',
     margin: 10,
     width: '100%',
@@ -158,12 +162,32 @@ const styles = StyleSheet.create({
   },
  
   meal: {
-    margin: 10,
+    flexDirection: 'row',
+    margin: 5,
     width: 100,
-    height: 50,
+    height: 70,
     backgroundColor: '#101010',
+    borderWidth: 1,
+    borderColor: '#DBDBDA',
+    borderRadius: 10
+  },
+  Foodname: {
+    margin: 5,
+    color: '#DBDBDA',
+    alignSelf: 'flex-start',
+    fontSize: 14,
+    width: 45,
   },
 
+  nutrients: {
+    color: '#DBDBDA',
+    fontSize: 12,
+  },
+image: {
+    margin: 5,
+    width: 40,
+    height: 40,
+  },
   text: {
     color: '#fff'
   }
