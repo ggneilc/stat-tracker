@@ -20,11 +20,16 @@ func CreateUser(c *fiber.Ctx) error {
 	}
   database.DB.Create(&user)
   createNewDayForUser(user)
+  createGoal(user)
 
   return c.JSON(fiber.Map{
     "Message": "success",
   })
 }
+
+
+
+
 //Update User setting Information
 func UpdateUser(c *fiber.Ctx) error {
   tempId := c.Params("id")
@@ -42,6 +47,9 @@ func UpdateUser(c *fiber.Ctx) error {
   database.DB.Save(&user)
   return c.SendString("Successfully updated User")
 }
+
+
+
 //Get All Users
 func getAllUsers(c *fiber.Ctx) error {
   var users []database.User

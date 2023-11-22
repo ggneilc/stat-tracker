@@ -13,11 +13,10 @@ func Connect() error {
   var err error
   
   //DESKTOP
-  dsn :="neil:password1@tcp(127.0.0.1:3306)/yougg?charset=utf8mb4&parseTime=True&loc=Local"
+ // dsn :="neil:password1@tcp(127.0.0.1:3306)/yougg?charset=utf8mb4&parseTime=True&loc=Local"
 
   //LAPTOP
-  //dsn :="root:password1@tcp(127.0.0.1:3306)/yougg?charset=utf8mb4&parseTime=True&loc=Local"
-
+  dsn :="root:password1@tcp(127.0.0.1:3306)/yougg?charset=utf8mb4&parseTime=True&loc=Local"
   db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
     DryRun: false,
   })
@@ -34,6 +33,7 @@ func Connect() error {
   DB.AutoMigrate(&Water{})
   DB.AutoMigrate(&Weight{})
   DB.AutoMigrate(&Sleep{})
+  DB.AutoMigrate(&Goal{})
 
   fmt.Printf("connected to database !!")
   

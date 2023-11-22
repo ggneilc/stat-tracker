@@ -75,9 +75,9 @@ func startCronJob() {
 	}
 
 	// Start the cron scheduler
-	c.Start()
+	//c.Start()
+  c.Run()
   fmt.Println("Started cron scheduler!")
- // c.Run()
 
   select {}
 }

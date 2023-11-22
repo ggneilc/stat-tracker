@@ -24,8 +24,18 @@ func SetupRoutes (app *fiber.App)  {
   user.Get(    "/:id", getSingleUser)
 
 
+  //Days
   user.Get("/:id/today", getUsersToday)
   user.Get("/:id/past", getUsersPastDays)
+
+  //Goals
+  user.Get("/:id/goals", getUserGoals)
+
+  user.Put("/:id/goals/general",  updateGeneral)
+  user.Put("/:id/goals/bw",       updateBodyWeight)
+  user.Put("/:id/goals/protein",  updateProtein)
+  user.Put("/:id/goals/sleep",    updateSleep)
+  user.Put("/:id/goals/water",    updateWater)
 
   //---------- Weights/Sleep -------------//
   user.Post(  "/:id/weight", createWorkout)
