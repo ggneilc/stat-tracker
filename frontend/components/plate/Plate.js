@@ -19,16 +19,14 @@ export const Plate = () => {
 
     const numericCals = parseFloat(calories);
     const numericProtein = parseFloat(protein);
-    // Check if conversion is successful (not NaN)
+
     if (isNaN(numericCals) || isNaN(numericProtein) ) {
-      // Handle invalid input (e.g., show an error message)
       console.error('Invalid input for cals or protein');
       return;
     }
 
     try {
       const url = "http://10.9.243.45:3000/users/"+user.id+"/meals";
-      //Posts the info to the login to store user obj
       const response = await fetch(url, {
         method: "POST",
         headers: {
@@ -56,64 +54,71 @@ export const Plate = () => {
       <Image
         style={styles.image}
         source={require('../../assets/food.png')} />
-      <View style={{padding: 2, alignSelf: 'center'}}> 
-        <Text style={styles.nutrients}>{item.Calories} C</Text>
-        <Text style={styles.nutrients}>{item.Protein} P</Text>
+      <View style={{flexDirection: 'row',alignSelf:'center'}}>
+        <Text style={styles.nutrients}>{item.FoodName}  </Text>
+        <Text style={styles.nutrients}>{item.Calories}C  </Text>
+        <Text style={styles.nutrients}>{item.Protein}P</Text>
       </View>
-      {/* Add more details if needed */}
     </View>
   );
 
   return (
     <View style={styles.container}>
       <View style={styles.item}>
+        <Text style={{fontSize: 28, color: '#fff', textAlign: 'center', }}> Today </Text>
 
         <View style={styles.inputRow}>
-        <Text style={styles.info}>Food:</Text>
-        <TextInput 
-          style={styles.input}
-          placeholder=''
-          onChangeText={onChangeFoodName}
-          value={foodName}/>
+          <TextInput 
+            style={styles.FoodInput}
+            placeholder='Food Name'
+            onChangeText={onChangeFoodName}
+            value={foodName}/>
         </View>
 
 
         <View style={styles.inputRow}>
-        <Text style={styles.info}>Calories: </Text>
-        <TextInput 
-          style={styles.input}
-          placeholder=''
-          keyboardType='numeric'
-          onChangeText={onChangeCalories}
-          value={calories}/>
-        </View>
+          <TextInput 
+            style={styles.input}
+            placeholder='calories'
+            keyboardType='numeric'
+            onChangeText={onChangeCalories}
+            value={calories}/>
 
 
-        <View style={styles.inputRow}>
-        <Text style={styles.info}>Protein:</Text>
-        <TextInput 
-          style={styles.input}
-          placeholder=''
-          keyboardType='numeric'
-          onChangeText={onChangeProtein}
-          value={protein}/>
-        </View>
-
+          <TextInput 
+            style={styles.input}
+            placeholder='protein'
+            keyboardType='numeric'
+            onChangeText={onChangeProtein}
+            value={protein}/>
 
         <Button
           title="new meal"
           onPress={onSubmit}
         />
 
+        </View>
+
+        <View style={{width: 200, height: 1, backgroundColor: '#dcd', margin: 10,  alignSelf: 'center'}}>
+        </View>
+
+        <View style={styles.template}>
+          <Image
+            style={{width: 30, height: 30, alignSelf: 'center',}}
+            source={require('../../assets/plus.png')} />
+        </View>
+
+        <View style={{width: 200, height: 1, backgroundColor: '#dcd', margin: 10,  alignSelf: 'center'}}>
+        </View>
 
         {userMeals && (
           <FlatList
             data={userMeals}
             renderItem={renderMealItem}
             keyExtractor={(item) => item.ID.toString()} // Provide a unique key for each item
-            numColumns={3}
           />
         )}
+
       </View>
     </View>
   );
@@ -140,6 +145,7 @@ const styles = StyleSheet.create({
 
   inputRow: {
     flexDirection: 'row',
+    justifyContent: 'center',
     width: '100%',
   },
 
@@ -149,28 +155,58 @@ const styles = StyleSheet.create({
     padding: 10
   },
 
-
-
-  input: {
-    marginTop: 5,
+  FoodInput: {
+    marginTop: 10,
+    margin: 5,
     color: '#fff',
     backgroundColor: '#101010',
     height: 35,
-    width: 150,
+    width: 275,
     borderWidth: 1,
     padding: 5,
+    borderRadius: 2,
   },
+
+  input: {
+    margin: 5,
+    color: '#fff',
+    backgroundColor: '#101010',
+    height: 35,
+    width: 75,
+    borderWidth: 1,
+    borderRadius: 2,
+    padding: 5,
+  },
+
+
+
+
  
   meal: {
     flexDirection: 'row',
+    alignSelf: 'center',
     margin: 5,
-    width: 100,
-    height: 70,
+    width: 275,
+    height: 50,
     backgroundColor: '#101010',
     borderWidth: 1,
     borderColor: '#DBDBDA',
     borderRadius: 10
   },
+
+  template: {
+    flexDirection: 'row',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    margin: 5,
+    width: 275,
+    height: 50,
+    backgroundColor: '#DBDBDA',
+    borderWidth: 1,
+    borderColor: '#fff',
+    borderRadius: 10
+  },
+
   Foodname: {
     margin: 5,
     color: '#DBDBDA',
@@ -181,13 +217,15 @@ const styles = StyleSheet.create({
 
   nutrients: {
     color: '#DBDBDA',
-    fontSize: 12,
+    fontSize: 18,
   },
-image: {
+
+  image: {
     margin: 5,
     width: 40,
     height: 40,
   },
+
   text: {
     color: '#fff'
   }

@@ -7,13 +7,16 @@ import { Svg, Circle } from 'react-native-svg';
 import { Plate } from '../plate/Plate'
 
 import { useSelector } from 'react-redux';
-import { selectUserMeals } from '../../features/user/userSlice';
+import { selectUserMeals, selectGoals } from '../../features/user/userSlice';
 
 export const Mealwheel = () => {
+  const goals = useSelector(selectGoals);
   const userMeals = useSelector(selectUserMeals);
+
   const [modalVisible, setModalVisidble] = React.useState(false);
   const [totalCals, setTotalCals] = React.useState(0);
   const [totalPro, setTotalPro] = React.useState(0);
+  const [toEat, setToEat] = React.useState(0);
 
   //Calculate total calories
   const calcCals = (meals) => {
@@ -25,15 +28,38 @@ export const Mealwheel = () => {
     });
     setTotalCals(sum);   
     setTotalPro(cum);
+    setToEat(toEat-totalCals);
   }
 
+  const initializeEats = () => {
+    setToEat(goals.calorie)
+  }
+
+  // Update toEat after totalCals changes
   React.useEffect(() => {
-    calcCals(userMeals)
-  }, [userMeals])
+    if (goals !== null){
+      setToEat(goals.calorie - totalCals);
+      console.log("Updated toEat: " + (goals.calorie - totalCals));
+    }
+  }, [totalCals, goals]);
+
+  // Calculate calories
+  React.useEffect(() => {
+    calcCals(userMeals);
+  }, [userMeals]);
+
+  //initializeEats
+  React.useEffect(() => {
+    if (goals !== null) {
+      initializeEats();
+    }
+  }, [goals]);
+
+
 
   const data = [
     { x: "Eaten", y: totalCals},
-    { x: "toEat", y: 1300}
+    { x: "toEat", y: toEat}
   ]
 
 
@@ -45,17 +71,20 @@ export const Mealwheel = () => {
         <Svg  width={450} height={450}>
           <Circle cx={225} cy={205} r={60} fill="#101010" stroke={'#DBDBDA'}/>
 
-          <VictoryPie
+          {goals && (
+           <VictoryPie
             width={450}
             innerRadius={100}
             data={data} 
             style={{
-              data: { fill: ({ datum }) => datum.x === "Eaten" ? "#72FF78" : "#c43a31"},
+              data: { fill: ({ datum }) => datum.y === goals.calorie && datum.x != "toEat" ? "#e3c646" :
+                  datum.x === "Eaten" ? "#72FF78" : "#c43a31"},
               labels: { fill: "#dcdab7"},
               parent: { }
             }}
           />
-        </Svg>
+          )}
+                 </Svg>
       </Pressable>
 
       <Text style={styles.words}> cals: {totalCals} </Text>

@@ -11,12 +11,17 @@ import { useDispatch } from 'react-redux';
 import { setPastDays, setUserMeals } from '../features/user/userSlice';
 
 import { useSelector } from 'react-redux';
-import { selectUser } from '../features/user/userSlice';
+import { selectUser, selectGoals } from '../features/user/userSlice';
 
 export const MealScreen = () => {
   const dispatch = useDispatch();
 
   const user = useSelector(selectUser);
+  const goals = useSelector(selectGoals);
+
+  if (goals !== null){
+    console.log("Goals from meal screen:"+JSON.stringify(goals));
+  }
 
   const retrieveUserMeals = async () => {
     try {
@@ -28,7 +33,8 @@ export const MealScreen = () => {
 
       const dayresponse = await fetch(url+"/past");
       const dayresult = await dayresponse.json();
-      dispatch(setPastDays({ days: dayresult }));
+      const clippedDays = dayresult.slice(0, -1);
+      dispatch(setPastDays({ days: clippedDays }));
 
       console.log("set userMeals & days in MealScreen")
     } catch (error) {
@@ -44,10 +50,6 @@ export const MealScreen = () => {
 
   return (
     <View style={styles.container}>
-
-      <View style={styles.stripe}>
-
-      </View>
       <Infosection />
       <Mealwheel />
       <Pastmeals />

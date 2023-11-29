@@ -33,6 +33,7 @@ func SetupRoutes (app *fiber.App)  {
 
   user.Put("/:id/goals/general",  updateGeneral)
   user.Put("/:id/goals/bw",       updateBodyWeight)
+  user.Put("/:id/goals/calorie",  updateCalorie)
   user.Put("/:id/goals/protein",  updateProtein)
   user.Put("/:id/goals/sleep",    updateSleep)
   user.Put("/:id/goals/water",    updateWater)

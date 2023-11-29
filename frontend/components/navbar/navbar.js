@@ -2,17 +2,30 @@ import * as React from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 
 import { useSelector } from 'react-redux';
-import { selectUser } from '../../features/user/userSlice';
+import { selectUser, selectGoals} from '../../features/user/userSlice';
 
 const Infobar = () => {
   const user = useSelector(selectUser);
+  const goals = useSelector(selectGoals);
 
   return (
     <>
-      {user && (
-        <View style={styles.container} > 
-          <Text style={styles.text}> HealthScore: {user.healthscore} </Text>
-          <Text style={styles.text}> Weight: {user.weight}lbs </Text>
+      {user && goals && (
+        <View style={styles.container}>
+
+          <View style={styles.hs}>
+            <Text style={styles.text}> {user.healthscore} </Text>
+          </View>
+
+          <View style={styles.infoItem}>
+            <Text style={styles.text}>  {user.weight}lbs </Text>
+          </View>
+
+          <View style={styles.infoItem}>
+            <Text style={styles.text}> G:</Text>
+            <Text style={{color: '#fff', alignSelf: 'center', fontSize: 18}}> {goals.general}</Text>
+          </View>
+
         </View>
       )}
     </>
@@ -43,8 +56,9 @@ container: {
   },
 
   text: {
+    alignSelf: 'center',
     color: '#fff',
-    fontSize: 20
+    fontSize: 28
   },
 
   item: {
@@ -69,4 +83,22 @@ container: {
     height: 50,
     width: 300
   },
+
+  infoItem: { 
+    flexDirection: 'row',
+    margin: 5,
+    width: 110,
+    height: 35,
+    textAlign: 'center',
+    backgroundColor: '#555'
+  },
+
+  hs: {
+    margin: 5,
+    marginRight: 0,
+    width: 50,
+    height: 35,
+    textAlign: 'center',
+    backgroundColor: '#000'
+  }
 })

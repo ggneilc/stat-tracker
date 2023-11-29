@@ -7,11 +7,14 @@ export const CreateAccount = ({ navigation }) => {
   const [password, onChangePassword] = React.useState('');
 
   const [age, onChangeAge] = React.useState('');
+  const [gender, onChangeGender] = React.useState('');
   const [weight, onChangeWeight] = React.useState('');
   const [height, onChangeHeight] = React.useState('');
 
 
   const onSubmit = async () => {
+
+    const numericGender = (gender === "m") ? 0 : 1;
 
     const numericAge = parseInt(age, 10);
     const numericWeight = parseFloat(weight);
@@ -35,6 +38,7 @@ export const CreateAccount = ({ navigation }) => {
           username, 
           email, 
           password, 
+          gender: numericGender,
           age: numericAge,
           weight: numericWeight, 
           height: numericHeight,
@@ -59,7 +63,6 @@ export const CreateAccount = ({ navigation }) => {
 
   }
 
-  //Each <TextInput> can become a Component for Login/CreateAccount
   return (
     <View style={styles.container}>
       <View style={styles.bgBlock}> 
@@ -70,51 +73,57 @@ export const CreateAccount = ({ navigation }) => {
       </View>
 
       <View style={styles.box}>
-      <Text style={styles.text}> Create Account ! </Text>
+        <Text style={styles.text}> Create Account ! </Text>
 
-      <TextInput 
-        style={styles.input}
-        placeholder='username'
-        onChangeText={onChangeUsername}
-        value={username}/>
-      <TextInput 
-        style={styles.input}
-        placeholder='email'
-        onChangeText={onChangeEmail}
-        value={email}/> 
+        <TextInput 
+          style={styles.input}
+          placeholder='username'
+          onChangeText={onChangeUsername}
+          value={username}/>
+        <TextInput 
+          style={styles.input}
+          placeholder='email'
+          onChangeText={onChangeEmail}
+          value={email}/> 
+        <TextInput 
+          style={styles.input}
+          placeholder='password'
+          onChangeText={onChangePassword}
+          value={password}/> 
 
-      <TextInput 
-        style={styles.input}
-        placeholder='password'
-        onChangeText={onChangePassword}
-        value={password}/> 
+        <Text style={styles.text}> Personal Info </Text>
 
-      <Text style={styles.text}> Personal Info </Text>
-      <TextInput 
-        style={styles.input}
-        placeholder='Age'
-        onChangeText={onChangeAge}
-        keyboardType='numeric'
-        value={age}/> 
-      <TextInput 
-        style={styles.input}
-        placeholder='Weight'
-        onChangeText={onChangeWeight}
-        keyboardType='numeric'
-        value={weight}/> 
-      <TextInput 
-        style={styles.input}
-        placeholder='Height'
-        onChangeText={onChangeHeight}
-        keyboardType='numeric'
-        value={height}/> 
+        <TextInput 
+          style={styles.input}
+          placeholder='Age'
+          onChangeText={onChangeAge}
+          keyboardType='numeric'
+          value={age}/> 
+        <TextInput 
+          style={styles.input}
+          placeholder='Gender m/f'
+          onChangeText={onChangeGender}
+          keyboardType='numeric'
+          value={gender}/> 
+        <TextInput 
+          style={styles.input}
+          placeholder='Weight'
+          onChangeText={onChangeWeight}
+          keyboardType='numeric'
+          value={weight}/> 
+        <TextInput 
+          style={styles.input}
+          placeholder='Height'
+          onChangeText={onChangeHeight}
+          keyboardType='numeric'
+          value={height}/> 
 
 
 
-      <Button
-        title="Log in"
-        onPress={onSubmit}
-      />
+        <Button
+          title="Log in"
+          onPress={onSubmit}
+        />
       </View>
     </View>
   );

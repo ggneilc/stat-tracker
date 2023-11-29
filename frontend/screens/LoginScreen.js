@@ -24,14 +24,9 @@ export const LoginScreen = ({ navigation }) => {
 
   }
 
-  //Each <TextInput> can become a component for Login/CreateAccount
-  //
-  //Screen 
-  //  image
-  //  { sign in }
-  //
   return (
     <View style={styles.container}>
+
 
 
       <View style={styles.bgBlock}> 
@@ -46,8 +41,6 @@ export const LoginScreen = ({ navigation }) => {
 
 
 
-      <Text style={styles.welcome}> </Text>
-
       <View style={styles.imageContainer}> 
         <Image
           style={styles.image}
@@ -58,24 +51,24 @@ export const LoginScreen = ({ navigation }) => {
       <View style={styles.signin}>
         <View style={styles.box}>
           <Text style={styles.text}> Welcome </Text>
-      <TextInput 
-        style={styles.input}
-        placeholder='username'
-        onChangeText={onChangeUsername}
-        value={username}/>
-      <TextInput 
-        style={styles.input}
-        placeholder='password'
-        onChangeText={onChangePassword}
-        value={password}/> 
-      <Button
-        title="Log in"
-        onPress={onSubmit}
-      />
-      <Button 
-        title="No Account?"
-        onPress={() => navigation.navigate('CreateAccount')}
-      />
+          <TextInput 
+            style={styles.input}
+            placeholder='username'
+            onChangeText={onChangeUsername}
+            value={username}/>
+          <TextInput 
+            style={styles.input}
+            placeholder='password'
+            onChangeText={onChangePassword}
+            value={password}/> 
+          <Button
+            title="Log in"
+            onPress={onSubmit}
+          />
+          <Button 
+            title="No Account?"
+            onPress={() => navigation.navigate('CreateAccount')}
+          />
         </View>
       </View>
 
@@ -85,6 +78,7 @@ export const LoginScreen = ({ navigation }) => {
 
 
 const styles = StyleSheet.create({
+
   container: {
     overflow: 'hidden',
     flex: 1,
@@ -125,14 +119,6 @@ const styles = StyleSheet.create({
     transform: [{ rotate: '-37.976deg'}]
   },
 
-  welcome: {
-    paddingTop: 25,
-    height: 50,
-    flex: 1, 
-    fontSize: 32,
-    color: '#000',
-    textAlign: 'center',
-  },
 
   imageContainer: {
     paddingTop: -10,
@@ -155,7 +141,6 @@ const styles = StyleSheet.create({
     height: 300,  
     backgroundColor: 'rgba(22, 21, 30, 0.80)'
   },
-
 
   input: {
     color: '#000',

@@ -8,15 +8,18 @@ import (
 type User struct {
   ID uint `gorm:"primaryKey"`
 
-  Username string
   Email    string
+  Username string
   Password string
 
   Age     uint
   Weight  uint
   Height  uint
+  Gender  uint
+
   Goals   Goal
   HealthScore uint
+
   CurrentDay  Day    `gorm:"foreignkey:UserID"`
   PastDays    []Day  `gorm:"foreignkey:UserID"`
 }
@@ -25,20 +28,13 @@ type Goal struct {
   ID uint `gorm:"primaryKey"`
   UserID  uint 
   
-  //  'bulk'/'cut'/'maintain'
   GeneralGoal  string
 
-  //if user is aiming for certain body weight
   BodyweightGoal   uint
-
-  //eating goals
   CalorieGoal  uint
   ProteinGoal  uint
 
-  // based on gender 
   SleepGoal    uint
-
-  // based on height/weight/gender
   WaterGoal    uint
 }
 

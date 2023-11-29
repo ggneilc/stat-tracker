@@ -25,7 +25,7 @@ func getUsersToday(c *fiber.Ctx) error {
   Preload("CurrentDay.Sleep").
   Find(&user, id)
 
-  return c.JSON(user)
+  return c.JSON(user.CurrentDay)
 }
 
 //---------- User's Past Days ----------//
