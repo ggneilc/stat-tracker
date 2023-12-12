@@ -26,12 +26,9 @@ This app is meant to start off as a test of using Golang as the backend and lear
 - Postgres / mysql database (indecisive rn)
 
 Current Library List: 
-    basic & navigation
  - React Native
  - linear-gradient
  - react-native-navigation : stack, materialtoptabs
-    charts
  - react-native-svg
  - victory-native
-    state management
  - redux
